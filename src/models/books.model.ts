@@ -32,3 +32,21 @@ export interface BodyResponseCreateBook{
     data : Record <string, string> // Object with key-value pairs of type string
 }
 
+export interface BodyResponseGetById {
+    message: string, 
+    data : Record <string, string> 
+}
+
+export interface BodyResquestUpdateBook{
+    title: string
+    author: string
+    description: string
+    summary: string
+    publicationDate: string
+}
+
+export interface BodyResponseUpdateBook {
+    message: string, 
+    data : Record <string, string> 
+}
+
