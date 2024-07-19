@@ -50,3 +50,8 @@ export interface BodyResponseUpdateBook {
     data : Record <string, string> 
 }
 
+export interface BodyResponseDeleteBook{
+    message: string, 
+    data: null
+}
+

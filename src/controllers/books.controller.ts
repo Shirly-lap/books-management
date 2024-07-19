@@ -1,4 +1,4 @@
-import { BodyRequestCreateBook, BodyResponseGetAllBooks, BodyResponseCreateBook, BodyResponseGetById, BodyResponseUpdateBook, BodyResquestUpdateBook } from "../models/books.model";
+import { BodyRequestCreateBook, BodyResponseGetAllBooks, BodyResponseCreateBook, BodyResponseGetById, BodyResponseUpdateBook, BodyResquestUpdateBook, BodyResponseDeleteBook } from "../models/books.model";
 
 export class BooksController {
     public domain: string;
@@ -108,5 +108,26 @@ export class BooksController {
         const responseBodyUpdateBook: BodyResponseUpdateBook = await response.json();
         return responseBodyUpdateBook;
 
+    }
+
+
+    async deleteBook (id:string, token: string) : Promise <BodyResponseDeleteBook> {
+        const header: Record<string, string> = {
+            'accept': '*/*',
+            'Authorization': `Bearer ${token}`
+        };
+
+        const requestOption: RequestInit = {
+            method: 'DELETE',
+            headers: header,
+        };
+
+        const response : Response = await fetch(`${this.domain}/api/v1/books/${id}`, requestOption);
+        if (!response.ok) {
+            throw new Error(`Error al eliminar libro:${response.status}: ${response.statusText}`);
+        }
+
+        const responseBodyDeleteBook: BodyResponseDeleteBook = await response.json();
+        return responseBodyDeleteBook;
     }
 }
