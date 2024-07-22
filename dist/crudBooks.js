@@ -13,6 +13,8 @@ const URL_BOOKS = "http://190.147.64.47:5155";
 const btnLogout = document.getElementById("btn-logout");
 const prevPage = document.getElementById("prev-page");
 const nextPage = document.getElementById("next-page");
+const btnSearch = document.getElementById("btn-search");
+const searchIdInput = document.getElementById("search-id");
 const token = localStorage.getItem("authToken");
 let currentPage = 1;
 const limit = 5;
@@ -25,15 +27,15 @@ if (!token) {
     window.location.href = "index.html";
 }
 else {
-    const containerBooks = document.querySelector(".container-books");
-    const form = document.querySelector("form");
+    const booksTableBody = document.getElementById("books-table-body");
+    const form = document.getElementById("book-form");
     const title = document.getElementById("title");
     const author = document.getElementById("author");
     const description = document.getElementById("description");
     const summary = document.getElementById("summary");
     const publicationDate = document.getElementById("publication-date");
-    let idCatche;
-    const cardTemplate = new TemplateController(containerBooks);
+    let idCache;
+    const tableTemplate = new TemplateController(booksTableBody);
     function allBooks(limit, currentPage) {
         return __awaiter(this, void 0, void 0, function* () {
             const crudBooks = new BooksController(URL_BOOKS);
@@ -41,10 +43,15 @@ else {
                 const response = yield crudBooks.readAllbooks(token, limit, currentPage);
                 console.log(`Respuesta de allBooks ${response}`);
                 const books = response.data;
-                containerBooks.innerHTML = '';
-                for (const book of books) {
-                    cardTemplate.render(book.id, book.title, book.author, book.description, book.summary, book.publicationDate);
-                }
+                const formattedBooks = books.map((book) => ({
+                    id: book.id,
+                    title: book.title,
+                    author: book.author,
+                    description: book.description,
+                    summary: book.summary,
+                    publicationDate: book.publicationDate
+                }));
+                tableTemplate.render(formattedBooks);
             }
             catch (error) {
                 console.error("Error fetching books:", error);
@@ -67,23 +74,23 @@ else {
     form.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const crudBooks = new BooksController(URL_BOOKS);
-        if (idCatche === undefined) {
+        if (idCache === undefined) {
             yield crudBooks.createBook(title, author, description, summary, publicationDate, token);
         }
         else {
-            yield crudBooks.updateBook(idCatche, title, author, description, summary, publicationDate, token);
-            idCatche = undefined;
+            yield crudBooks.updateBook(idCache, title, author, description, summary, publicationDate, token);
+            idCache = undefined;
         }
         form.reset();
         yield allBooks(limit, currentPage);
     }));
-    containerBooks.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    booksTableBody.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
         if (e.target instanceof HTMLButtonElement) {
             const crudBooks = new BooksController(URL_BOOKS);
             if (e.target.classList.contains("btn-warning")) {
-                idCatche = e.target.dataset.id;
-                if (idCatche) {
-                    const book = yield crudBooks.readById(idCatche, token);
+                idCache = e.target.dataset.id;
+                if (idCache) {
+                    const book = yield crudBooks.readById(idCache, token);
                     title.value = book.data.title;
                     author.value = book.data.author;
                     description.value = book.data.description;
@@ -98,11 +105,35 @@ else {
                     const confirmDelete = confirm("Are you sure you want to delete?");
                     if (confirmDelete) {
                         yield crudBooks.deleteBook(bookId, token);
-                        idCatche = undefined;
+                        idCache = undefined;
                         yield allBooks(limit, currentPage);
                     }
                 }
             }
+        }
+    }));
+    btnSearch.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
+        e.preventDefault();
+        const crudBooks = new BooksController(URL_BOOKS);
+        const bookId = searchIdInput.value;
+        if (bookId) {
+            const book = yield crudBooks.readById(bookId, token);
+            if (book) {
+                tableTemplate.render([{
+                        id: book.data.id,
+                        title: book.data.title,
+                        author: book.data.author,
+                        description: book.data.description,
+                        summary: book.data.summary,
+                        publicationDate: book.data.publicationDate
+                    }]);
+            }
+            else {
+                alert("Book not found");
+            }
+        }
+        else {
+            yield allBooks(limit, currentPage);
         }
     }));
 }
