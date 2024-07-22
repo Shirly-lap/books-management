@@ -9,7 +9,7 @@ export interface Datum {
     author: string;
     description: string;
     summary: string;
-    publicationDate: Date;
+    publicationDate: string;
     createdBy: string;
     updatedBy: null;
     deletedBy: null;
