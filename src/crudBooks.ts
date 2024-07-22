@@ -1,7 +1,5 @@
-// import Swal from 'sweetalert2';
 import { TemplateController } from "./controllers/template.controller.js";
 import { BooksController } from "./controllers/books.controller.js";
-
 const URL_BOOKS: string = "http://190.147.64.47:5155";
 const btnLogout = document.getElementById("btn-logout") as HTMLButtonElement;
 const prevPage = document.getElementById("prev-page") as HTMLButtonElement;
