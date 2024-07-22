@@ -1,3 +1,4 @@
+// import Swal from 'sweetalert2';
 import { TemplateController } from "./controllers/template.controller.js";
 import { BooksController } from "./controllers/books.controller.js";
 
@@ -13,13 +14,35 @@ let currentPage: number = 1;
 const limit: number = 5;
 
 btnLogout.addEventListener("click", (e: Event) => {
-    localStorage.removeItem("authToken");
-    window.location.href = "index.html";
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, log me out!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.removeItem("authToken");
+            Swal.fire(
+                'Logged out!',
+                'You have been logged out successfully.',
+                'success'
+            ).then(() => {
+                window.location.href = "index.html";
+            });
+        }
+    });
 });
-
 if (!token) {
-    alert("Authentication token is missing. Please log in");
-    window.location.href = "index.html";
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Authentication token is missing. Please log in',
+    }).then(() => {
+        window.location.href = "index.html";
+    });
 } else {
     const booksTableBody = document.getElementById("books-table-body") as HTMLTableSectionElement;
     const form = document.getElementById("book-form") as HTMLFormElement;
@@ -75,9 +98,20 @@ if (!token) {
 
         if (idCache === undefined) {
             await crudBooks.createBook(title, author, description, summary, publicationDate, token as string);
+            Swal.fire({
+                icon: 'success',
+                title: 'Book Created',
+                text: 'The book has been created successfully.',
+            });
         } else {
             await crudBooks.updateBook(idCache, title, author, description, summary, publicationDate, token as string);
             idCache = undefined;
+            Swal.fire({
+                icon: 'success',
+                title: 'Book Updated',
+                text: 'The book has been updated successfully.',
+            });
+
         }
         form.reset();
         await allBooks(limit, currentPage);
@@ -103,11 +137,25 @@ if (!token) {
                 let bookId = e.target.dataset.id;
 
                 if (bookId) {
-                    const confirmDelete = confirm("Are you sure you want to delete?");
+                    const confirmDelete = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    });
+
                     if (confirmDelete) {
                         await crudBooks.deleteBook(bookId, token as string);
                         idCache = undefined;
                         await allBooks(limit, currentPage);
+                        Swal.fire(
+                            'Deleted!',
+                            'The book has been deleted.',
+                            'success'
+                        );
                     }
                 }
             }

@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// import Swal from 'sweetalert2';
 import { TemplateController } from "./controllers/template.controller.js";
 import { BooksController } from "./controllers/books.controller.js";
 const URL_BOOKS = "http://190.147.64.47:5155";
@@ -19,12 +20,31 @@ const token = localStorage.getItem("authToken");
 let currentPage = 1;
 const limit = 5;
 btnLogout.addEventListener("click", (e) => {
-    localStorage.removeItem("authToken");
-    window.location.href = "index.html";
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, log me out!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.removeItem("authToken");
+            Swal.fire('Logged out!', 'You have been logged out successfully.', 'success').then(() => {
+                window.location.href = "index.html";
+            });
+        }
+    });
 });
 if (!token) {
-    alert("Authentication token is missing. Please log in");
-    window.location.href = "index.html";
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Authentication token is missing. Please log in',
+    }).then(() => {
+        window.location.href = "index.html";
+    });
 }
 else {
     const booksTableBody = document.getElementById("books-table-body");
@@ -76,10 +96,20 @@ else {
         const crudBooks = new BooksController(URL_BOOKS);
         if (idCache === undefined) {
             yield crudBooks.createBook(title, author, description, summary, publicationDate, token);
+            Swal.fire({
+                icon: 'success',
+                title: 'Book Created',
+                text: 'The book has been created successfully.',
+            });
         }
         else {
             yield crudBooks.updateBook(idCache, title, author, description, summary, publicationDate, token);
             idCache = undefined;
+            Swal.fire({
+                icon: 'success',
+                title: 'Book Updated',
+                text: 'The book has been updated successfully.',
+            });
         }
         form.reset();
         yield allBooks(limit, currentPage);
@@ -102,11 +132,20 @@ else {
                 console.log("estoy en el delete");
                 let bookId = e.target.dataset.id;
                 if (bookId) {
-                    const confirmDelete = confirm("Are you sure you want to delete?");
+                    const confirmDelete = yield Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    });
                     if (confirmDelete) {
                         yield crudBooks.deleteBook(bookId, token);
                         idCache = undefined;
                         yield allBooks(limit, currentPage);
+                        Swal.fire('Deleted!', 'The book has been deleted.', 'success');
                     }
                 }
             }

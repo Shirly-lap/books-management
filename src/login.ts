@@ -13,12 +13,33 @@ form.addEventListener("submit", async (e:Event) =>{
 
     const token : string | null = response.data.token;
 
-    if(token){
-        localStorage.setItem('authToken', token);
-        window.location.href = "books.html"
-    }
-    else{
-        console.log("login falló");
+    try {
+        const response = await user.login(email, password);
+        const token: string | null = response.data.token;
+
+        if (token) {
+            localStorage.setItem('authToken', token);
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful',
+                text: 'You have successfully logged in.',
+            }).then(() => {
+                window.location.href = "books.html";
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: 'Invalid email or password.',
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while trying to log in.',
+        });
+        console.error("Login error:", error);
     }
     form.reset()
 

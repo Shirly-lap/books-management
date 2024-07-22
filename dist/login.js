@@ -17,12 +17,34 @@ form.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, functio
     const user = new UsersController(URL_API);
     const response = yield user.login(email, password);
     const token = response.data.token;
-    if (token) {
-        localStorage.setItem('authToken', token);
-        window.location.href = "books.html";
+    try {
+        const response = yield user.login(email, password);
+        const token = response.data.token;
+        if (token) {
+            localStorage.setItem('authToken', token);
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful',
+                text: 'You have successfully logged in.',
+            }).then(() => {
+                window.location.href = "books.html";
+            });
+        }
+        else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: 'Invalid email or password.',
+            });
+        }
     }
-    else {
-        console.log("login falló");
+    catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while trying to log in.',
+        });
+        console.error("Login error:", error);
     }
     form.reset();
 }));
