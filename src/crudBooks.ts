@@ -1,16 +1,24 @@
 import { TemplateController } from "./controllers/template.controller.js";
 import { BooksController } from "./controllers/books.controller.js";
+
+// URL de la API de libros
 const URL_BOOKS: string = "http://190.147.64.47:5155";
+
+// Elementos del DOM
 const btnLogout = document.getElementById("btn-logout") as HTMLButtonElement;
 const prevPage = document.getElementById("prev-page") as HTMLButtonElement;
 const nextPage = document.getElementById("next-page") as HTMLButtonElement;
 const btnSearch = document.getElementById("btn-search") as HTMLButtonElement;
 const searchIdInput = document.getElementById("search-id") as HTMLInputElement;
+
+// Obtener el token de autenticación almacenado en el localStorage
 const token = localStorage.getItem("authToken");
 
+// Variables para la paginación
 let currentPage: number = 1;
 const limit: number = 5;
 
+// Evento para el botón de cerrar sesión
 btnLogout.addEventListener("click", (e: Event) => {
     Swal.fire({
         title: 'Are you sure?',
@@ -33,6 +41,8 @@ btnLogout.addEventListener("click", (e: Event) => {
         }
     });
 });
+
+// Verificar si el token de autenticación existe
 if (!token) {
     Swal.fire({
         icon: 'error',
@@ -42,6 +52,7 @@ if (!token) {
         window.location.href = "index.html";
     });
 } else {
+    // Elementos del DOM para la tabla de libros y el formulario de libros
     const booksTableBody = document.getElementById("books-table-body") as HTMLTableSectionElement;
     const form = document.getElementById("book-form") as HTMLFormElement;
     const title = document.getElementById("title") as HTMLInputElement;
@@ -51,8 +62,10 @@ if (!token) {
     const publicationDate = document.getElementById("publication-date") as HTMLInputElement;
     let idCache: undefined | string;
 
+    // Controlador de plantillas para renderizar libros
     const tableTemplate = new TemplateController(booksTableBody);
 
+    // Función para cargar todos los libros con paginación
     async function allBooks(limit: number, currentPage: number) {
         const crudBooks = new BooksController(URL_BOOKS);
         try {
@@ -76,6 +89,7 @@ if (!token) {
     }
     allBooks(limit, currentPage);
 
+    // Evento para el botón de página anterior
     prevPage.addEventListener("click", async (e: Event) => {
         if (currentPage >= 1) {
             currentPage--;
@@ -83,6 +97,7 @@ if (!token) {
         }
     });
 
+    // Evento para el botón de página siguiente
     nextPage.addEventListener("click", async (e: Event) => {
         if (currentPage >= 1) {
             currentPage++;
@@ -90,6 +105,7 @@ if (!token) {
         }
     });
 
+    // Evento para el formulario de crear/actualizar libro
     form.addEventListener("submit", async (e: Event) => {
         e.preventDefault();
         const crudBooks = new BooksController(URL_BOOKS);
@@ -109,12 +125,12 @@ if (!token) {
                 title: 'Book Updated',
                 text: 'The book has been updated successfully.',
             });
-
         }
         form.reset();
         await allBooks(limit, currentPage);
     });
 
+    // Evento para los botones de editar y eliminar en la tabla de libros
     booksTableBody.addEventListener("click", async (e: Event) => {
         if (e.target instanceof HTMLButtonElement) {
             const crudBooks = new BooksController(URL_BOOKS);
@@ -160,6 +176,7 @@ if (!token) {
         }
     });
 
+    // Evento para el botón de búsqueda de libro por ID
     btnSearch.addEventListener("click", async (e: Event) => {
         e.preventDefault();
         const crudBooks = new BooksController(URL_BOOKS);
