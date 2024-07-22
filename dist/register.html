@@ -1,27 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="CRUD Users With TypeScript - Functions, (Object Oriented Programming, OOP) Interfaces" />
+    <meta name="keywords" content="TypeScript, Crud, Functions, Object Oriented Programming, Interfaces">
+    <meta name="sitedomain" content="https://riwi.io">
+    <meta name="organization" content=“RIWI_GATES”>
+    <meta name="author" content="Luisa Fernanda Ramirez Cardona">
+    <meta name="designer" content="Riwi">
+    <meta name="copyright" content="© 2024 Riwi. All rights reserved">
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="15days">
     <title>Books</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="./styles/style.css">
 
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ">
         <div class="collapse navbar-collapse d-flex justify-content-end">
-            <ul class="navbar-nav  ">
+            <ul class="navbar-nav ">
                 <li class="nav-item"><a class="nav-link" href="./register.html">Book form</a></li>
                 <li class="nav-item"><a class="nav-link" href="./books2.html">Books</a></li>
+
             </ul>
             <button type="button" id="btn-logout" class="btn btn-danger">Salir</button>
         </div>
     </nav>
     <main class="container mt-4">
-        <div class="form-container ">
-            <h1 class="text-center">Edit book</h1>
-            <form id="book-form" class="text-start d-flex justify-content-between flex-wrap">
+        <div class="form-container">
+            <h1 class="text-center">Book Form</h1>
+            <form id="book-form" class="text-start">
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" class="form-control" id="title" placeholder="Title">
@@ -45,36 +59,12 @@
                 <button type="submit" id="btn-new" class="btn btn-success btn-custom">Save</button>
             </form>
         </div>
-        <h1 class="mt-5">Books</h1>
-        <div class="container">
-        <div class="input-group mb-3">
-            <input type="text" id="search-id" class="form-control" placeholder="Search by ID">
-            <button class="btn btn-primary" id="btn-search">Search</button>
-        </div>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Description</th>
-                    <th>Summary</th>
-                    <th>Publication Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="books-table-body"></tbody>
-        </table>
-        <div id="pagination" class="d-flex justify-content-center gap-5">
-            <button id="prev-page" class="btn btn-primary">Previous</button>
-            <button id="next-page" class="btn btn-primary">Next</button>
-        </div>
-    </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="./crudBooks.js"></script>
+    <script type="module" src="./crudBooks2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
+
 </html>
